@@ -1,0 +1,244 @@
+@import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz|Ubuntu+Condensed|Fjalla+One|PT+Sans);
+
+body{
+	background: #f2f2f2;
+}
+.navigation-bar {
+	position: fixed;	
+	width: 250px;
+	background:#1a1a1a;
+	height: 100%;
+	left: 0px;
+	top: 0px;
+	border-right: 5px solid #0066ff;
+}
+.navigation-bar ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    
+}
+
+.navigation-bar li a {
+    display: block;
+    color: white;
+    padding: 10px 0 10px 0px;
+	text-align: center;
+    text-decoration: none;
+	font-family: 'PT Sans', sans-serif;
+	font-size: 18px;
+}
+#user-session-label{
+	color:green
+}
+.navigation-bar li a:hover {
+    background-color: #0066ff;
+    color: white;
+	width:100%;
+	transition: background-color 500ms;
+}
+.navigation-bar .active{
+	background-color: #0066ff;
+	color: white;
+}
+
+.document{
+	position: relative;
+	left: 250px;
+	padding-left: 15px;
+	padding-right: 15px;
+	margin-left: 50px;
+	width: 1000px;
+}
+.document table td a{
+	color: #46869C;
+	text-decoration:none;
+	font-family:Ubuntu Condensed;
+	font-size:18px;
+}
+.document table td a:hover{
+	text-decoration: underline;
+}
+.document p{
+	font-family: 'PT Sans';
+	font-size:16px;
+}
+.document .imgBox{
+	opacity: 1;
+}
+.document .imgBox:hover{
+	opacity: .6;
+}
+.movie_title, .movie_rating{
+	font-family: 'Fjalla One', sans-serif;
+	font-size:24px;
+}
+
+
+h1{
+	font-family: 'Fjalla One', sans-serif;
+	color:#4d4d4d;
+}
+hr {
+    border: 0;
+    height: 2px;
+    background: #333;
+    background-image: linear-gradient(to right, #ccc, #333, #ccc);
+}
+
+td{
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-right: 20px;
+}
+th{
+	text-align: left;
+}
+input{
+	background: transparent;
+}
+input[type="text"] {
+  padding: 10px;
+  border: none;
+  border-bottom: solid 2px #46869C;
+  transition: border 0.3s;
+  font-size: 16px;
+}
+input[type="text"]:focus,
+input[type="text"].focus {
+  border-bottom: solid 2px #7ebace;
+  outline: none;
+}
+input[type="number"]{
+	border:none;
+	border-bottom: solid 2px #46869C;
+}
+input[type="number"]:focus{
+	border-bottom: solid 2px #7ebace;
+	outline: none;
+}
+input[type="submit"] {
+    cursor: pointer;
+	position: relative;
+	width: 50px;
+	height: 50px;
+	border: 0px black;
+	border-radius: 50%;
+	background-color: #46869C;
+	box-shadow: 0px 5px 0px #396F82;
+	outline: none;
+}
+input[type="submit"]:hover {
+	background-color: #56A5BF;
+	top: 2px;
+	box-shadow: 0px 3px 0px #396F82;
+}
+input[type="submit"]:active {
+	top: 5px;
+	box-shadow: 0px 0px 0px #396F82;
+}
+
+textarea{
+	border-color: #46869C;
+	border-width: 2px;
+	font-size: 16px;
+	resize: none;
+	background: transparent;
+	transition: border-color 500ms;
+}
+
+textarea:focus{
+	border-color: #7ebace;
+	outline: none;
+	transition: border-color 500ms;
+}
+
+/*--Admin Page-*/
+.login-page-body{
+	background-color:#c8e1ea;
+}
+.login-block {
+     width: 320px;
+     padding: 20px;
+     background: #90c4d5;
+     border-radius: 5px;
+     border-top: 5px solid #56A5BF;
+     margin: 0 auto;
+     position: fixed;
+     top: 50%;
+     left: 50%;
+     transform: translate(-50%, -50%);
+ }
+
+ .login-block h1 {
+     text-align: center;
+     color: #000;
+     font-size: 18px;
+     text-transform: uppercase;
+     margin-top: 0;
+     margin-bottom: 20px;
+ }
+
+ .login-block input {
+     width: 100%;
+     height: 42px;
+     box-sizing: border-box;
+     border-radius: 5px;
+     border: 1px solid #ccc;
+     margin-bottom: 20px;
+     font-size: 14px;
+     font-family: Montserrat;
+     padding: 0 20px 0 50px;
+     outline: none;
+ }
+
+ .login-block input#username {
+     background: #fff url('http://i.imgur.com/u0XmBmv.png') 20px top no-repeat;
+     background-size: 16px 80px;
+ }
+
+ .login-block input#password {
+     background: #fff url('http://i.imgur.com/Qf83FTt.png') 20px top no-repeat;
+     background-size: 16px 80px;
+ }
+
+ .login-block input:active, .login-block input:focus {
+     border: 1px solid #387d94;
+     border-radius: 5px;
+ }
+
+ .login-block button {
+     width: 100%;
+     height: 40px;
+     background: #56A5BF;
+     box-sizing: border-box;
+     border-radius: 5px;
+     border: 1px solid #3f8da6;
+     color: #fff;
+     font-weight: bold;
+     text-transform: uppercase;
+     font-size: 14px;
+     font-family: Montserrat;
+     outline: none;
+     cursor: pointer;
+ }
+
+ .login-block button:hover {
+     background: #6bb0c7;
+ }
+ 
+ .login-block .cancel-button{
+	cursor: pointer;
+	position: relative;
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	background-color: #ff3333;
+	outline: none;
+	margin-top:15px;
+	left:135px;
+ }
+ 
+ .login-block .cancel-button:hover{
+	background-color: #ff4d4d;
+ }
