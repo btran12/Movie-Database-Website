@@ -1,7 +1,7 @@
 <?php
 	include "connect_server.php";
 
-	$QUERY = "DESCRIBE btran6291_MOVIE";
+	$QUERY = "DESCRIBE btran6291_REVIEW";
 	$q = $conn->prepare($QUERY);
 	$q->execute();
 	$q->setFetchMode(PDO::FETCH_BOTH);

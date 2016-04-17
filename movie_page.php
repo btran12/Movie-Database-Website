@@ -17,16 +17,11 @@
 	//Only 1 result should return
 	$m=$q->fetch();
 
-	// //Get Reviews Information linked by movie id
-	// $QUERY = "SELECT * FROM btran6291_REVIEW WHERE movie_id = " . $movie_id; 
-	// $q = $conn->prepare($QUERY);
-	// $q->execute();
-	// $q->setFetchMode(PDO::FETCH_BOTH);
-
-	// //Get all the available reviews; Move to the right place.
-	// while($r=$q->fetch()){
-		
-	// }
+	//Get Reviews Information linked by movie id
+	$QUERY = "SELECT * FROM btran6291_REVIEW WHERE movie_id = " . $movie_id ." ORDER BY Review_date desc"; 
+	$q = $conn->prepare($QUERY);
+	$q->execute();
+	$q->setFetchMode(PDO::FETCH_BOTH);
 
 ?>
 <html>
@@ -49,7 +44,7 @@
 			<td><p>Duration: <?php echo $m["movie_duration"] ?> min</p></td>
 		</tr>
 		<tr>
-			<td colspan="2"><p style="font-size:24px;font-style:bold"><?php echo $m["movie_rating"] ?>0/10</p></td>
+			<td colspan="2"><p style="font-size:24px;font-style:bold"><?php echo $m["movie_rating"] ?>/10</p></td>
 		</tr>
 		<tr>
 			<td><p>Directed By: <?php echo $m["movie_director"] ?></p></td>
@@ -65,27 +60,30 @@
 		<table style="table-layout:fixed">
 			<?php echo "<input type='hidden' name='movie_id' value='".$movie_id."'>"; ?>
 			<tr>
-				<td><input type="text" placeholder="Your Name" name="user_name" required></td>
+				<td colspan="2"><input type="text" placeholder="Your Name" name="user_name" pattern="^[a-zA-Z ]*$" required></td>
 			</tr>
 			<tr>
-				<td><textarea placeholder="Your Review" name="user_review" rows="10" cols="70" required></textarea></td>
+				<td colspan="2"><textarea placeholder="Your Review" name="user_review" rows="10" cols="70" pattern="^[a-zA-Z ]*$" required></textarea></td>
 			</tr>
 			<tr>
-				<td><input type="number" name="user_rating" min="0" max="10" step="0.1" value="0"><center><input type="submit" value="+" style="font-size:20px;font-weight:bold;margin-bottom:30px"></center></td>
+				<td width="50px"><input type="number" name="user_rating" min="0" max="10" step="0.1" value="0"></td><td><input type="submit" value="+" style="font-size:20px;font-weight:bold"></td>
 			</tr>
 		</table>
 			
 	</form>
 	<div class="user-reviews">
-		<table border="1" width="100%">
+		<table width="100%">
 		<?php
-			//Loop
-			echo "<tr><td colspan='2']>";
-			echo "<p> Review </p>";
-			echo "</td></tr>";
-			echo "<tr>";
-			echo "<td><p> Username </p></td><td><p> User Rating </p></td>";
-			echo "</tr>";
+			//Get all the available reviews; 
+			while($r=$q->fetch()){
+				echo "<tr><td colspan='2']>";
+				echo "<p>". $r["Reviewer_review"]."</p>";
+				echo "</td></tr>";
+				echo "<tr>";
+				echo "<td><p>". $r["reviewer_name"] ."</p></td><td><p>". $r["Review_rating"] ."</p></td><td><p>". $r["Review_date"] ."</p></td>";
+				echo "</tr>";
+			}
+			
 		?>
 		</table>
 	</div>
@@ -105,11 +103,12 @@
 
 	include 'connect_server.php';
 
-	$QUERY = "INSERT INTO btran6291_REVIEW(review_name,Reviewer_review,Review_date,Review_rating,movie_id) VALUES(?,?,?,?,?)";
+	$QUERY = "INSERT INTO btran6291_REVIEW(reviewer_name,Reviewer_review,Review_date,Review_rating,movie_id) VALUES(?,?,?,?,?)";
 
 	$q = $conn->prepare($QUERY);
 
 	if($q->execute(array($username,$userreview,$date,$userrating,$movieid))){
+		//Refresh
 		echo "<script>document.location ='movie_page.php?id=". $movieid. "';</script>"; 
 	}else{
 		echo $q->errorCode();

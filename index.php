@@ -2,44 +2,54 @@
 <?php
 	$page = $_GET["page"];
 	$page_title = "";
+	$releaseYear = "SUBSTRING(movie_released_date,1, 4)";
+	$releaseMonth = "SUBSTRING(movie_released_date,6, 2)";
+	$releaseDay = "SUBSTRING(movie_released_date,9, 2)";
 
-	switch($page){
+	switch($page){ //Popluate different pages with different information
+		
 		case "main":
-			$page_title = "New and Currently Showing Movies";
+			$page_title = "Soon to be Released";
+			//Newest movies to be released
+			//(year > cYear) || (year = cYear && month > cMonth) || (year = cYear && month = cMonth && day >= cDay) 
+			$QUERY = "SELECT * FROM btran6291_MOVIE WHERE ((".$releaseYear." > YEAR(CURDATE())) OR (".$releaseYear." = YEAR(CURDATE()) AND ".$releaseMonth." > MONTH(CURDATE())) OR (".$releaseYear." = YEAR(CURDATE()) AND ".$releaseMonth." = MONTH(CURDATE()) AND ".$releaseDay." >= DAY(CURDATE()))) ORDER BY movie_released_date asc";
+			break;
+		case "current":
+			$page_title = "Now Showing";
 			//Newest movies released in 2016 only
-			$QUERY = "SELECT * FROM btran6291_MOVIE WHERE SUBSTRING(movie_released_date,1, 4) = 2016 ORDER BY movie_released_date desc";
+			$QUERY = "SELECT * FROM btran6291_MOVIE WHERE (".$releaseYear." = YEAR(CURDATE()) AND ".$releaseMonth." <= MONTH(CURDATE()) AND ".$releaseDay." <= DAY(CURDATE())) ORDER BY movie_released_date desc";
 			break;
 		case "topall":
 			$page_title = "Best Movies of All Times";
-			// $QUERY = "SELECT * FROM btran6291_movie WHERE movie_rating > 8.5 ORDER BY movie_rating desc LIMIT 10";
+			$QUERY = "SELECT * FROM btran6291_MOVIE WHERE movie_rating > 8.5 ORDER BY movie_rating desc";
 			break;
 		case "top15":
 			$page_title = "The Best Movies of 2015";
-			// $QUERY = "SELECT * FROM btran6291_movie WHERE movie_rating > 8.5 && SUBSTRING(movie_released_date,1,4) = 2015 ORDER BY movie_rating desc";
+			$QUERY = "SELECT * FROM btran6291_MOVIE WHERE movie_rating > 7.5 && ".$releaseYear." = 2015 ORDER BY movie_rating desc";
 			break;
 		case "top14":
 			$page_title = "The Best Movies of 2014";
-			// $QUERY = "SELECT * FROM btran6291_movie WHERE movie_rating > 8.5 && SUBSTRING(movie_released_date,1,4) = 2014 ORDER BY movie_rating desc";
+			$QUERY = "SELECT * FROM btran6291_MOVIE WHERE movie_rating > 7.5 && ".$releaseYear." = 2014 ORDER BY movie_rating desc";
 			break;
 		case "top13":
 			$page_title = "The Best Movies of 2013";
-			// $QUERY = "SELECT * FROM btran6291_movie WHERE movie_rating > 8.5 && SUBSTRING(movie_released_date,1,4) = 2013 ORDER BY movie_rating desc";
+			$QUERY = "SELECT * FROM btran6291_MOVIE WHERE movie_rating > 7.5 && ".$releaseYear." = 2013 ORDER BY movie_rating desc";
 			break;
 		case "top12":
 			$page_title = "The Best Movies of 2012";
-			// $QUERY = "SELECT * FROM btran6291_movie WHERE movie_rating > 8.5 && SUBSTRING(movie_released_date,1,4) = 2012 ORDER BY movie_rating desc";
+			$QUERY = "SELECT * FROM btran6291_MOVIE WHERE movie_rating > 7.5 && ".$releaseYear." = 2012 ORDER BY movie_rating desc";
 			break;
 		case "top11":
 			$page_title = "The Best Movies of 2011";
-			// $QUERY = "SELECT * FROM btran6291_movie WHERE movie_rating > 8.5 && SUBSTRING(movie_released_date,1,4) = 2011 ORDER BY movie_rating desc";
+			$QUERY = "SELECT * FROM btran6291_MOVIE WHERE movie_rating > 7.5 && ".$releaseYear." = 2011 ORDER BY movie_rating desc";
 			break;
 		case "top10":
 			$page_title = "The Best Movies of 2010";
-			// $QUERY = "SELECT * FROM btran6291_movie WHERE movie_rating > 8.5 && SUBSTRING(movie_released_date,1,4) = 2010 ORDER BY movie_rating desc";
+			$QUERY = "SELECT * FROM btran6291_MOVIE WHERE movie_rating > 7.5 && ".$releaseYear." = 2010 ORDER BY movie_rating desc";
 			break;
 		default: //Same as main
 			$page_title = "New and Currently Showing Movies";
-			$QUERY = "SELECT * FROM btran6291_MOVIE WHERE SUBSTRING(movie_released_date,1, 4) = 2016 ORDER BY movie_released_date desc";
+			$QUERY = "SELECT * FROM btran6291_MOVIE WHERE ".$releaseYear." = 2016 ORDER BY movie_released_date desc";
 	}
 ?>
 <html>
@@ -82,18 +92,24 @@
 				$movie_plot = $r["movie_plot"];
 				//$movie_director= $r["movie_director"];
 				//$movie_duration = $r["movie_duration"];
-				//$movie_rating= $r["movie_rating"];
+				$movie_rating= $r["movie_rating"];
 				
 				echo "<tr>";
 				echo "<td width='20%'><a href='movie_page.php?id=".$movie_id."'><img src='". $poster_url ."' style='width:250px;height:350px;' class='imgBox'></a></td>";
-				echo "<td width='65%' style='vertical-align:bottom;'><div class='movie_title' style='display:inline'>". $movie_title ."</div><p style='display:inline;margin-left:15px'>". $movie_released_date ."<p>". $movie_plot. "</p></td>";
-				echo "<td width='15%' align='center'><div class='movie_rating'>". $movie_rating=0 . "/10</div></td>";
+				echo "<td width='65%' style='vertical-align:bottom;'><div class='movie_title' style='display:inline'>". $movie_title ."</div><p style='display:inline;margin-left:15px'>". formatDate($movie_released_date) ."<p>". $movie_plot. "</p></td>";
+				echo "<td width='15%' align='center'><div class='movie_rating'>". $movie_rating . "/10</div></td>";
 				echo "</tr>";
 			}
 			
 			//Close connection
 			$conn=null; 
 			
+		?>
+		<?php
+			function formatDate($date){
+				$dateObject = date_create($date);
+				return date_format($dateObject, "j F Y");
+			}
 		?>
 
 	<table>

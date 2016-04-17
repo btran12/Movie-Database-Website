@@ -1,6 +1,6 @@
 <?php
 session_start();
-if($_SESSION['valid']){
+if($_SESSION['valid'] && ($_SESSION['username'] == 'btran')){
 	include 'connect_server.php';
 
 	$id=$_GET['id'];
@@ -16,7 +16,8 @@ if($_SESSION['valid']){
 	}
 	$conn=null;
 }else{
-	echo "<h2>This Page is Restricted to the Admins only.</h2>";
+	echo "<title>Error 401. Unauthorized</title>";
+	echo "<h1>Error 401. Unauthorized</h1>";
 	header('Refresh: 3; URL = index.php');
 }
 ?>

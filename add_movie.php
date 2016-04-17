@@ -1,7 +1,7 @@
 
 <?php
 session_start();
-if ($_SESSION['valid']){
+if ($_SESSION['valid'] && ($_SESSION['username'] == 'btran')){
 if (empty($_POST)){
 ?>
 <html>
@@ -9,24 +9,38 @@ if (empty($_POST)){
 <head>
 <title>Add Movie</title>
 <link rel="stylesheet" type="text/css" href="styles.css">
+
 </head>
 <body>
 <?php
 	include "nav-bar.php";
 ?>
+<?php 
+	include 'connect_server.php';
 
+	$QUERY = "SELECT movie_title FROM btran6291_MOVIE";
+	$q = $conn->prepare($QUERY);
+	$q->execute();
+	$q->setFetchMode(PDO::FETCH_BOTH);
+	$titles = array();
+
+	while($r=$q->fetch()){
+		array_push($titles,$r["movie_title"]);
+	}
+
+?>
 <div class="document">
-	<br><h1><center>Add Movie</center></h1>
+	<h1><center>Add Movie</center></h1>
 	<hr>
-	<form method="POST" action="add_movie.php">
+	<form name="movieForm" action="add_movie.php" method="POST">
 		<table width="100%" style="table-layout:fixed">
 			<tr>
 				<td width="60%">
 					<table style="table-layout:fixed">
 						<tr>
-							<td style="width:450px"><p>Title</p><input type="text" name="title" placeholder="Title" style="width: 400px" required></td>
+							<td style="width:450px"><p>Title</p><input type="text" name="title" placeholder="Title" style="width: 400px" onkeyup="showSuggestion(this.value)" required></td>
 							<td style="width:200px"><p>Director</p><input type="text" name="director" placeholder="Director" style="width: 150px" ></td>
-							<td><p>Date Released in USA</p><input type="text" name="date" placeholder="Released date" style="width: 150px"></td>
+							<td><p>Date Released in USA</p><input type="text" name="date" placeholder="YYYY/MM/DD" pattern="^\d{4}\/(0?[1-9]|1[012])\/(0?[1-9]|[12][0-9]|3[01])$" title="Format: 20YY/MM/DD" style="width: 150px"></td>
 						</tr>
 						<tr>
 							<td><p>IMDB Rating</p><input type="number" name="rating" min="0" max="10" step="0.1" value="0" style="width: 50px"> <p style="display:inline">/10</p></td>
@@ -53,14 +67,28 @@ if (empty($_POST)){
 	</form>
 
 </div>
+
+<script>
+
+	function showSuggestion(str){
+		var matchedTitles = [];
+		var title;
+		for (title in titles){
+			if (str == title){
+				matchedTitles.push(title);
+			}
+		}
+
+	}
+</script>
 </body>
 
 <?php
 }else{
 
 	include 'connect_server.php';
-	//TODO add rating back; include another ? : make sure is in correct order.
-	$QUERY = "INSERT into btran6291_MOVIE(movie_title,movie_plot,movie_director,movie_duration,poster_url,movie_released_date) values (?,?,?,?,?,?)";
+	
+	$QUERY = "INSERT into btran6291_MOVIE(movie_title,movie_plot,movie_director,movie_duration,poster_url,movie_released_date,movie_rating) values (?,?,?,?,?,?,?)";
 
 	$q = $conn->prepare($QUERY);
 
@@ -72,7 +100,7 @@ if (empty($_POST)){
 	$link=$_POST['poster_link'];
 	$date=$_POST['date'];
 
-	if($q->execute(array($title,$plot,$director,$duration,$link,$date))){
+	if($q->execute(array($title,$plot,$director,$duration,$link,$date,$rating))){
 		echo '<script>document.location = "add_movie.php";</script>'; 
 	}else{
 		echo $q->errorCode();
@@ -82,7 +110,8 @@ if (empty($_POST)){
 	$conn=null;
 }
 }else{
-	echo "<h2>This Page is Restricted to the Admins only.</h2>";
+	echo "<title>Error 401 Unauthorized</title>";
+	echo "<h1>Error 401 Unauthorized</h1>";
 	header('Refresh: 3; URL = index.php');
 }
 ?>

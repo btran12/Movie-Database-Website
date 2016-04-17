@@ -19,12 +19,23 @@
          $msg = '';
          
          if (!empty($_POST)) {
-            if ($_POST['username'] == 'user' && $_POST['password'] == 'pass') {
-               $_SESSION['valid'] = true;
-               $_SESSION['timeout'] = time();
-               $_SESSION['username'] = 'user';
+            $username = $_POST['username'];
+            $password = $_POST['password'];
 
-               header('Refresh: 1; URL = add_movie.php');
+            if (($username == 'btran' && $password == '6291')|| ($username == 'guest' && $password == '1234')) {
+
+               $_SESSION['valid'] = true;
+               //$_SESSION['timeout'] = time();
+               if ($username == 'btran'){
+                  $_SESSION['username'] = 'btran';
+                  header('Refresh: 1; URL = add_movie.php');
+               }else if ($username == 'guest'){
+                  $_SESSION['username'] = 'guest';
+                  header('Refresh: 1; URL = view_movies.php');
+               }
+               
+
+               
             }else {
                $msg = 'Incorrect Login Credentials. Try Again.';
             }
@@ -35,8 +46,8 @@
             <div class="login-block">
                 <h1>Login</h1>
                 <p style="font-family:Montserrat"><?php echo $msg; ?></p>
-                <input type="text" name="username" placeholder="Username" id="username" required/>
-                <input type="password" name="password" placeholder="Password" id="password" required/>
+                <input type="text" name="username" placeholder="Username - (guest)" id="username" required/>
+                <input type="password" name="password" placeholder="Password - (1234)" id="password" required/>
                 <button  type="submit" name = "login">Login</button>
 				<a href="index.php"><div class="cancel-button"></div></a>
             </div>
@@ -49,6 +60,10 @@
 <?php
 }else{
    //If already logged in just redirect
-   header('Refresh: 0; URL = add_movie.php');
+   if ($_SESSION['username'] == 'btran'){
+      header('Refresh: 1; URL = add_movie.php');
+   }else if ($_SESSION['username'] == 'guest'){
+      header('Refresh: 1; URL = view_movies.php');
+   }
 }
 ?>

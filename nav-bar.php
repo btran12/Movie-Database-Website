@@ -1,8 +1,9 @@
-[]<?php
+<?php
 	session_start();
 	echo "<div class='navigation-bar'>
 	<ul>
-		<li><a href='index.php?page=main'> New and Currently Showing </a></li>
+		<li><a href='index.php?page=main'> Upcoming Movies </a></li>
+		<li><a href='index.php?page=current'> Currently Showing Movies </a></li>
 		<li><a href='index.php?page=topall'> 10 Best Movies of All Times </a></li>
 		<li><a href='index.php?page=top15'> Top Movies of 2015 </a></li>
 		<li><a href='index.php?page=top14'> Top Movies of 2014 </a></li>

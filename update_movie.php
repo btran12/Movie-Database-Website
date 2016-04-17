@@ -1,6 +1,6 @@
 <?php
 session_start();
-if ($_SESSION['valid']){
+if ($_SESSION['valid'] && ($_SESSION['username'] == 'btran')){
 	if (empty($_POST)){
 		$id = 		$_GET['id'];
 		$title = 	$_GET['title'];
@@ -54,12 +54,12 @@ if ($_SESSION['valid']){
 
 		include 'connect_server.php';
 		//TODO ADD RATING
-		$QUERY = "UPDATE btran6291_MOVIE set movie_title=?,movie_plot=?,movie_director=?,movie_duration=?,poster_url=?,movie_released_date=? where ID=?";
+		$QUERY = "UPDATE btran6291_MOVIE set movie_title=?,movie_plot=?,movie_director=?,movie_duration=?,poster_url=?,movie_released_date=?, movie_rating=? where ID=?";
 
 		$q = $conn->prepare($QUERY);
 		
 		//Form post
-		if ($q->execute(array($_POST['title'],$_POST['plot'],$_POST['director'],$_POST['duration'],$_POST['poster_link'],$_POST['date'],$_POST['id']))){
+		if ($q->execute(array($_POST['title'],$_POST['plot'],$_POST['director'],$_POST['duration'],$_POST['poster_link'],$_POST['date'],$_POST['rating'], $_POST['id']))){
 			//Redirect
 			echo '<script>document.location = "view_movies.php";</script>';
 		}else{
@@ -69,7 +69,8 @@ if ($_SESSION['valid']){
 		$conn=null;
 	}
 }else{
-	echo "<h2>This Page is Restricted to the Admins only.</h2>";
+	echo "<title>Error 401. Unauthorized</title>";
+	echo "<h1>Error 401. Unauthorized</h1>";
 	header('Refresh: 3; URL = index.php');
 }
 ?>

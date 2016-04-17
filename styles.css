@@ -6,11 +6,11 @@ body{
 .navigation-bar {
 	position: fixed;	
 	width: 250px;
-	background:#1a1a1a;
+	background: #333333;
 	height: 100%;
 	left: 0px;
 	top: 0px;
-	border-right: 5px solid #0066ff;
+	border-right: 5px solid #3385ff;
 }
 .navigation-bar ul {
     list-style-type: none;
@@ -32,13 +32,13 @@ body{
 	color:green
 }
 .navigation-bar li a:hover {
-    background-color: #0066ff;
+    background-color: #3385ff;
     color: white;
 	width:100%;
 	transition: background-color 500ms;
 }
 .navigation-bar .active{
-	background-color: #0066ff;
+	background-color: #3385ff;
 	color: white;
 }
 
@@ -47,8 +47,8 @@ body{
 	left: 250px;
 	padding-left: 15px;
 	padding-right: 15px;
-	margin-left: 50px;
-	width: 1000px;
+	margin-left: 20px;
+	width: 75%;
 }
 .document table td a{
 	color: #46869C;
@@ -110,6 +110,7 @@ input[type="text"].focus {
   outline: none;
 }
 input[type="number"]{
+	font-size: 16px;
 	border:none;
 	border-bottom: solid 2px #46869C;
 }
