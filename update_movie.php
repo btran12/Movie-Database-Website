@@ -51,6 +51,11 @@ if ($_SESSION['valid'] && ($_SESSION['username'] == 'btran')){
 		</body>
 		</html>";
 	}else{
+		function sanitize($data){
+			$data=stripslashes($data); // Remove all slashses
+			$data=strip_tags($data); //Remove all tags
+			return $data;
+		}
 
 		include 'connect_server.php';
 		//TODO ADD RATING
@@ -59,7 +64,7 @@ if ($_SESSION['valid'] && ($_SESSION['username'] == 'btran')){
 		$q = $conn->prepare($QUERY);
 		
 		//Form post
-		if ($q->execute(array($_POST['title'],$_POST['plot'],$_POST['director'],$_POST['duration'],$_POST['poster_link'],$_POST['date'],$_POST['rating'], $_POST['id']))){
+		if ($q->execute(array(sanitize($_POST['title']),sanitize($_POST['plot']),sanitize($_POST['director']),sanitize($_POST['duration']),sanitize($_POST['poster_link']),sanitize($_POST['date']),sanitize($_POST['rating']),sanitize($_POST['id'])))){
 			//Redirect
 			echo '<script>document.location = "view_movies.php";</script>';
 		}else{
@@ -72,5 +77,6 @@ if ($_SESSION['valid'] && ($_SESSION['username'] == 'btran')){
 	echo "<title>Error 401. Unauthorized</title>";
 	echo "<h1>Error 401. Unauthorized</h1>";
 	header('Refresh: 3; URL = index.php');
+	die();
 }
 ?>

@@ -39,7 +39,7 @@ if (empty($_POST)){
 					<table style="table-layout:fixed">
 						<tr>
 							<td style="width:450px"><p>Title</p><input type="text" name="title" placeholder="Title" style="width: 400px" onkeyup="showSuggestion(this.value)" required></td>
-							<td style="width:200px"><p>Director</p><input type="text" name="director" placeholder="Director" style="width: 150px" ></td>
+							<td style="width:200px"><p>Director(s)</p><input type="text" name="director" placeholder="Director" style="width: 150px" ></td>
 							<td><p>Date Released in USA</p><input type="text" name="date" placeholder="YYYY/MM/DD" pattern="^\d{4}\/(0?[1-9]|1[012])\/(0?[1-9]|[12][0-9]|3[01])$" title="Format: 20YY/MM/DD" style="width: 150px"></td>
 						</tr>
 						<tr>
@@ -85,6 +85,12 @@ if (empty($_POST)){
 
 <?php
 }else{
+	//Clean data incase of web/sql injections
+	function sanitize($data){
+		$data=stripslashes($data); // Remove all slashses
+		$data=strip_tags($data); //Remove all tags
+		return $data;
+	}
 
 	include 'connect_server.php';
 	
@@ -92,13 +98,13 @@ if (empty($_POST)){
 
 	$q = $conn->prepare($QUERY);
 
-	$title=$_POST['title'];
-	$plot=$_POST['plot'];
-	$director=$_POST['director'];
-	$rating=$_POST['rating'];
-	$duration=$_POST['duration'];
-	$link=$_POST['poster_link'];
-	$date=$_POST['date'];
+	$title= sanitize($_POST['title']);
+	$plot= sanitize($_POST['plot']);
+	$director= sanitize($_POST['director']);
+	$rating= sanitize($_POST['rating']);
+	$duration= sanitize($_POST['duration']);
+	$link= sanitize($_POST['poster_link']);
+	$date= sanitize($_POST['date']);
 
 	if($q->execute(array($title,$plot,$director,$duration,$link,$date,$rating))){
 		echo '<script>document.location = "add_movie.php";</script>'; 
@@ -108,10 +114,12 @@ if (empty($_POST)){
 
 	//Close connection
 	$conn=null;
+
 }
 }else{
 	echo "<title>Error 401 Unauthorized</title>";
 	echo "<h1>Error 401 Unauthorized</h1>";
 	header('Refresh: 3; URL = index.php');
+	die();
 }
 ?>

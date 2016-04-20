@@ -5,52 +5,83 @@
 	$releaseYear = "SUBSTRING(movie_released_date,1, 4)";
 	$releaseMonth = "SUBSTRING(movie_released_date,6, 2)";
 	$releaseDay = "SUBSTRING(movie_released_date,9, 2)";
+	$one = $two = $three = $four = $five = $six = $seven = $eight = $nine = "";
 
 	switch($page){ //Popluate different pages with different information
 		
 		case "main":
 			$page_title = "Soon to be Released";
+			$one = "active";
 			//Newest movies to be released
 			//(year > cYear) || (year = cYear && month > cMonth) || (year = cYear && month = cMonth && day >= cDay) 
 			$QUERY = "SELECT * FROM btran6291_MOVIE WHERE ((".$releaseYear." > YEAR(CURDATE())) OR (".$releaseYear." = YEAR(CURDATE()) AND ".$releaseMonth." > MONTH(CURDATE())) OR (".$releaseYear." = YEAR(CURDATE()) AND ".$releaseMonth." = MONTH(CURDATE()) AND ".$releaseDay." >= DAY(CURDATE()))) ORDER BY movie_released_date asc";
 			break;
 		case "current":
 			$page_title = "Now Showing";
+			$two = "active";
 			//Newest movies released in 2016 only
 			$QUERY = "SELECT * FROM btran6291_MOVIE WHERE (".$releaseYear." = YEAR(CURDATE()) AND ".$releaseMonth." <= MONTH(CURDATE()) AND ".$releaseDay." <= DAY(CURDATE())) ORDER BY movie_released_date desc";
 			break;
 		case "topall":
 			$page_title = "Best Movies of All Times";
+			$three = "active";
 			$QUERY = "SELECT * FROM btran6291_MOVIE WHERE movie_rating > 8.5 ORDER BY movie_rating desc";
 			break;
 		case "top15":
 			$page_title = "The Best Movies of 2015";
+			$four = "active";
 			$QUERY = "SELECT * FROM btran6291_MOVIE WHERE movie_rating > 7.5 && ".$releaseYear." = 2015 ORDER BY movie_rating desc";
 			break;
 		case "top14":
 			$page_title = "The Best Movies of 2014";
+			$five = "active";
 			$QUERY = "SELECT * FROM btran6291_MOVIE WHERE movie_rating > 7.5 && ".$releaseYear." = 2014 ORDER BY movie_rating desc";
 			break;
 		case "top13":
 			$page_title = "The Best Movies of 2013";
+			$six = "active";
 			$QUERY = "SELECT * FROM btran6291_MOVIE WHERE movie_rating > 7.5 && ".$releaseYear." = 2013 ORDER BY movie_rating desc";
 			break;
 		case "top12":
 			$page_title = "The Best Movies of 2012";
+			$seven = "active";
 			$QUERY = "SELECT * FROM btran6291_MOVIE WHERE movie_rating > 7.5 && ".$releaseYear." = 2012 ORDER BY movie_rating desc";
 			break;
 		case "top11":
 			$page_title = "The Best Movies of 2011";
+			$eight = "active";
 			$QUERY = "SELECT * FROM btran6291_MOVIE WHERE movie_rating > 7.5 && ".$releaseYear." = 2011 ORDER BY movie_rating desc";
 			break;
 		case "top10":
 			$page_title = "The Best Movies of 2010";
+			$nine = "active";
 			$QUERY = "SELECT * FROM btran6291_MOVIE WHERE movie_rating > 7.5 && ".$releaseYear." = 2010 ORDER BY movie_rating desc";
 			break;
 		default: //Same as main
 			$page_title = "New and Currently Showing Movies";
 			$QUERY = "SELECT * FROM btran6291_MOVIE WHERE ".$releaseYear." = 2016 ORDER BY movie_released_date desc";
 	}
+
+	// function get_client_ip() {
+	//     $ipaddress = '';
+	//     if (isset($_SERVER['HTTP_CLIENT_IP']))
+	//         $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
+	//     else if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+	//         $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+	//     else if(isset($_SERVER['HTTP_X_FORWARDED']))
+	//         $ipaddress = $_SERVER['HTTP_X_FORWARDED'];
+	//     else if(isset($_SERVER['HTTP_FORWARDED_FOR']))
+	//         $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
+	//     else if(isset($_SERVER['HTTP_FORWARDED']))
+	//         $ipaddress = $_SERVER['HTTP_FORWARDED'];
+	//     else if(isset($_SERVER['REMOTE_ADDR']))
+	//         $ipaddress = $_SERVER['REMOTE_ADDR'];
+	//     else
+	//         $ipaddress = 'UNKNOWN';
+	//     return $ipaddress;
+	// }
+	// //Log user's IP address 
+	// $dateAndIP = date('Y-m-d H:i:s') . " - " . get_client_ip();
 ?>
 <html>
 
@@ -90,8 +121,6 @@
 				$movie_released_date= $r["movie_released_date"];
 				$movie_title= $r["movie_title"];
 				$movie_plot = $r["movie_plot"];
-				//$movie_director= $r["movie_director"];
-				//$movie_duration = $r["movie_duration"];
 				$movie_rating= $r["movie_rating"];
 				
 				echo "<tr>";

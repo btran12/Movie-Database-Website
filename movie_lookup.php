@@ -6,6 +6,7 @@
 
 <body>
 <?php
+	$ten = "active";
 	include "nav-bar.php";
 ?>
 <?php
