@@ -11,7 +11,7 @@
 	$q->execute();
 	$q->setFetchMode(PDO::FETCH_BOTH);
 
-	//Only 1 result should return
+	//Only 1 movie from the database based on the passed in movie id
 	$m=$q->fetch();
 
 	//Get Reviews Information linked by movie id
@@ -22,54 +22,25 @@
 	
 ?>
 <?php
+	//Get Youtube API data
+	$DEVELOPER_KEY = "YOUR API KEY";
+
+	$url_query = rawurlencode($m["movie_title"] . " movie trailer");
+
+	$json = file_get_contents("https://www.googleapis.com/youtube/v3/search?part=id&q=".$url_query."&key=".$DEVELOPER_KEY);
+	$obj = json_decode($json);
+
+	$youtube_video_id = $obj->items[0]->id->videoId;
+?>
+
+<?php
 	include "nav-bar.php";
 ?>
 <html>
 	<head>
 		<link rel="stylesheet" type="text/css" href="styles.css">
 		<title><?php echo $m["movie_title"]; ?></title>
-		<script>
-			// Codecademy Youtube API Tutorial
-
-			// Return the first result id when searched for the trailer of movie
-			// Replace the iframe src with the id concatenated
-			function showResponse(response) {
-				var responseString = JSON.stringify(response.items[0].id.videoId, '', 2);
-				responseString = responseString.replace(/"/g, ""); //Replace double quotes with nothing
-				document.getElementById('youtube-frame').src = "https://www.youtube.com/embed/" + responseString + "?rel=0&iv_load_policy=3&amp;showinfo=0";
-			}
-
-			// Called automatically when JavaScript client library is loaded.
-			function onClientLoad() {
-				gapi.client.load('youtube', 'v3', onYouTubeApiLoad);
-			}
-
-			// Called automatically when YouTube API interface is loaded.
-			function onYouTubeApiLoad() {
-				gapi.client.setApiKey('AIzaSyBBj3selsO2bOhTYRuR6ZxmJxRzup2Bx5c');
-				search();
-			}
-
-			function search() {
-				// Use the JavaScript client library to create a search.list() API call.
-				//Search bby title of page
-				var request = gapi.client.youtube.search.list({
-					part: 'id',
-					q: <?php echo "'".$m["movie_title"]." movie trailer'";?>
-					
-				});
-				
-				// Send the request to the API server,
-				// and invoke onSearchRepsonse() with the response.
-				request.execute(onSearchResponse);
-			}
-
-			// Called automatically with the response of the YouTube API request.
-			function onSearchResponse(response) {
-				showResponse(response);
-			}
-		</script>
-		<script src="https://apis.google.com/js/client.js?onload=onClientLoad" type="text/javascript"></script>
+		
 	</head>
 	
 <body>
@@ -89,19 +60,19 @@
 	<table style="table-layout:fixed" width="100%">
 		<tr>
 			<td rowspan="3" style="width:300px">
-				<img src=<?php echo "'".$m["poster_url"]."'"?>  height="450" width="300">
+				<img src=<?php echo "'".$m["poster_url"]."'"?>  height="400" width="275">
 			</td>
 			<td style="vertical-align:bottom;width:150px">
 				<p><b>Duration:</b><br><?php echo $m["movie_duration"] ?> min</p>
 			</td>
 			<td rowspan="3" align="right">
-				<iframe width="100%" height="480" id="youtube-frame" src="" frameborder="0" allowfullscreen="allowfullscreen"></iframe>
+				<iframe id="youtube-frame" src="" frameborder="0" allowfullscreen="allowfullscreen"></iframe>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<p style="font-size:28px;font-weight:bold;color:#ff8c1a">
-					<?php echo $m["movie_rating"] ?>/10
+				<p style="font-size:28px;color:#0099ff">
+					<?php echo $m["movie_rating"] ?>
 				</p>
 			</td>
 		</tr>
@@ -153,9 +124,11 @@
 				echo "<tr>
 					<td colspan='3' height='10'>
 					<hr style='background-image:none;'>";
+
+				//Review Update and Delete options will only show up if it's the admin
 				if ($_SESSION['valid'] && ($_SESSION['username'] == 'btran')){
-					echo "<a href='edit_review.php?id=".$r["ID"]."'>Edit</a>
-					<a href='remove_review.php?id=".$r["ID"]."&movieid=".$movie_id."' style='margin-left:50px;color:red'>Remove</a>";
+					echo "<a href='update_review.php?id=".$r["ID"]."'>Edit</a>
+					<a href='delete_review.php?id=".$r["ID"]."&movieid=".$movie_id."' style='margin-left:50px;color:red'>Remove</a>";
 				}
 				echo "</td>
 					</tr>";
@@ -183,7 +156,10 @@
 	</div>
 	
 </div>
-
+	<script>
+		//Set video ID to the src link of youtube frame
+		document.getElementById('youtube-frame').src = "https://www.youtube.com/embed/" + <?php echo '"'.$youtube_video_id.'"'; ?> + "?rel=0&iv_load_policy=3&amp;showinfo=0";
+	</script>
 </body>
 </html>
 <?php
