@@ -1,9 +1,11 @@
 <?php
+//Start the session the get SESSION values
 session_start();
-
+//Check if the current session is valid and that the user is authorized to make updates.
 if ($_SESSION['valid'] && ($_SESSION['username'] == 'btran')){
+	
+	//Values passed through to the url to be updated 
 	if (empty($_POST)){
-
 		$id = 		$_GET['id'];
 		$title = 	$_GET['title'];
 		$plot= 		$_GET['plot'];
@@ -17,7 +19,6 @@ if ($_SESSION['valid'] && ($_SESSION['username'] == 'btran')){
 
 	<head>
 		<title>Update Movie</title>
-		<link href='https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz|Ubuntu+Condensed|Fjalla+One' rel='stylesheet' type='text/css'>
 		<link rel='stylesheet' type='text/css' href='styles.css'>
 	</head>
 	<body>
@@ -86,9 +87,14 @@ if ($_SESSION['valid'] && ($_SESSION['username'] == 'btran')){
 </html>
 <?php	
 	}else{
+		/**
+		*	Strips data of invalid tags or slashes
+		* 	To prevent injections
+		*	$data - is the string to be cleaned
+		**/
 		function sanitize($data){
-			$data=stripslashes($data); // Remove all slashses
-			$data=strip_tags($data); //Remove all tags
+			$data=stripslashes($data);
+			$data=strip_tags($data); 
 			return $data;
 		}
 
@@ -106,7 +112,7 @@ if ($_SESSION['valid'] && ($_SESSION['username'] == 'btran')){
 
 		$q = $conn->prepare($QUERY);
 		
-		//Form post
+		//Clean the data before adding it to the database
 		if ($q->execute(array(
 			sanitize($_POST['title']),
 			sanitize($_POST['plot']),
@@ -117,7 +123,7 @@ if ($_SESSION['valid'] && ($_SESSION['username'] == 'btran')){
 			sanitize($_POST['rating']),
 			sanitize($_POST['id']))
 		)){
-			//Redirect
+			//Redirect back to the view movies database page
 			echo '<script>document.location = "view_movies.php";</script>';
 		}else{
 			echo "Unable to update movie";
@@ -127,6 +133,7 @@ if ($_SESSION['valid'] && ($_SESSION['username'] == 'btran')){
 	}
 	
 }else{
+	//Error messages when the user is unauthorized to make updates.
 	echo "<title>Error 401. Unauthorized</title>";
 	echo "<h1>Error 401. Unauthorized</h1>";
 	header('Refresh: 3; URL = index.php');

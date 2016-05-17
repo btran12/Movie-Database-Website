@@ -1,15 +1,28 @@
 <?php
 session_start();
+
+//Any users with a valid session can view the movies database but cannot make any changes to it.
 if ($_SESSION['valid']){
 
 	include 'connect_server.php';
-
+	
+	//Options to sort the database
 	$order_by = "ID";
-
-	if (isset($_GET['order'])){
-		$order_by = $_GET['order'];
+	$order = "desc";
+	if (isset($_GET['orderby'])){
+		$order_by = $_GET['orderby'];
 	}
-
+	if (isset($_GET['order'])){
+		$order = $_GET['order'];
+	}
+	//Alternate when the user click to sort again
+	if ($order == "asc"){
+		$order = "desc";
+	}else{
+		$order = "asc";
+	}
+	//Return the number of items in the movies database
+	//Just to get a head count of how many movies are there
 	$QUERY = "SELECT COUNT(*) as rows 
 				FROM btran6291_MOVIE";
 
@@ -19,39 +32,41 @@ if ($_SESSION['valid']){
 	$r=$q->fetch();
 
 	$count=$r["rows"];
-
+	
+	//Get all the movies and all columns
 	$QUERY = "SELECT * 
 				FROM btran6291_MOVIE 
-				ORDER BY ". $order_by;
+				ORDER BY ". $order_by . " " . $order;
 
 	$q = $conn->prepare($QUERY);
 	$q->execute();
 	$q->setFetchMode(PDO::FETCH_BOTH);
 ?>
 <head>
+	<title>Movies Database</title>
 	<link rel="stylesheet" type="text/css" href="styles.css">
 </head>
-
+<body>
 	<h1>Movies Database (<?php echo $count ?>)</h1>
 	<p><a href='index.php'>Home</a></p>
 	<p><a href='add_movie.php'>Add another movie</a></p>
 	<hr>
 	<table width='100%' border='1'>
 		<th style='width:35px'>
-			<a href='view_movies.php?order=ID'>ID</a>
+			<a href=<?php echo "view_movies.php?orderby=ID&order=".$order; ?>>ID</a>
 		</th>
 		<th style='width:150px'>
-			<a href='view_movies.php?order=movie_title'>Title</a>
+			<a href=<?php echo "view_movies.php?orderby=movie_title&order=".$order; ?>>Title</a>
 		</th>
 		<th style='width:150px'>Director</th>
 		<th>Plot</th>
 		<th style='width:40px'>Duration</th>
 		<th>Poster Link</th>
 		<th style='width:35px'>
-			<a href='view_movies.php?order=movie_rating'>Rating</a>
+			<a href=<?php echo "view_movies.php?orderby=movie_rating&order=".$order; ?>>Rating</a>
 		</th>
 		<th style='width:130px'>
-			<a href='view_movies.php?order=movie_released_date'>Date (Y/M/D)</a>
+			<a href=<?php echo "view_movies.php?orderby=movie_released_date&order=".$order; ?>>Date (Y/M/D)</a>
 		</th>
 		<th style='width:60px'></th>
 		<th style='width:25px'></th>
@@ -89,24 +104,32 @@ if ($_SESSION['valid']){
 ?>
 	</table>
 
-<script>
-	function confirmDelete(id) {
-		if (<?php echo "\"". $_SESSION["username"] . "\"" ?> !== "guest"){
-		    if (confirm("Are you sure? ID: " + id) == true) {
-		        document.location = "delete_movie.php?id="+id;
-		    }
-		}else{
-			window.alert("Unauthorized");
+	<script>
+		/** 
+		*	Popup to confirm if the user wants to delete the entry
+		*	This option is restricted to the admin only
+		*	id - is the id of the movie, just to confirm with the user that, that is the movie they want to delete
+		**/
+		function confirmDelete(id) {
+			if (<?php echo "\"". $_SESSION["username"] . "\"" ?> !== "guest"){
+			    if (confirm("Are you sure? ID: " + id) == true) {
+			        document.location = "delete_movie.php?id="+id;
+			    }
+			}else{
+				window.alert("Unauthorized");
+			}
+		  
 		}
-	  
-	}
-</script>
+	</script>
+</body>
 
 <?php
 	//Close connection
 	$conn=null;
 }else{
-	echo "<h2>This Page is Restricted to the Admins only.</h2>";
+	echo "<title>Error 401. Unauthorized Access.";
+	echo "<h4>Error 401. You are unauthorized to perform this action.</h4>";
 	header('Refresh: 3; URL = index.php');
+	die();
 }
 ?>

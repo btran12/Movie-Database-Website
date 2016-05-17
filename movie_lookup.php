@@ -1,68 +1,96 @@
 <html>
-<head>
-<title>Movie Search</title>
-<link rel="stylesheet" type="text/css" href="styles.css">
-</head>
+	<head>
+		<title>Movie Search</title>
+		<link rel="stylesheet" type="text/css" href="styles.css">
+	</head>
 
 <body>
 <?php
+	//Set the search link on the navigation bar as active
 	$ten = "active";
 	include "nav-bar.php";
-?>
-<?php
-	if (empty($_POST)){
-?>
-<div class="document">
-	
-	<br><h1><center>Movie Search</center></h1>
-	<hr>
-	<form action="movie_lookup.php" method="POST">
-		<input type="text" name="movie_title" placeholder="Search Title" style="width:300px">
-		<input type="text" name="movie_year" placeholder="Movie Year (Optional)" style="width:200px">
-		<input type="submit" value="?" style="font-weight:bold;font-size:18px">
-	</form>
-	<br>
-</div>
-</body>
 
-</html>
+	//======Get All Movies Titles=============
+	include 'connect_server.php';
 
-<?php
-}else{
-	$search_title = $_POST["movie_title"];
-	$search_year = $_POST["movie_year"];
+	$QUERY = "SELECT ID,movie_title FROM btran6291_MOVIE";
+	$q = $conn->prepare($QUERY);
+	$q->execute();
+	$q->setFetchMode(PDO::FETCH_BOTH);
+	$titles = array();
+	$ids = array();
+
+	//Get all queried data into an array.
+	while($r=$q->fetch()){
+		array_push($titles,$r["movie_title"]);
+		array_push($ids, $r["ID"]);
+	}
+
+	$titlesAsString = "";
+	$idsAsString = "";
+
+	//Get all the values from the array into a single string.
+	foreach($titles as $str){
+		$titlesAsString .= "\"$str\",";
+	}
+
+	foreach($ids as $id){
+		$idsAsString .= "\"$id\",";
+	}
+
+	//========================================
 ?>
+	<!--========== FORM ======================-->
 	<div class="document">
 	
 		<h1><center>Movie Search</center></h1>
 		<hr>
-		<form action="movie_lookup.php" method="POST">
-		<input type="text" name="movie_title" placeholder="Search Title" style="width:300px">
-		<input type="text" name="movie_year" placeholder="Movie Year (Optional)" style="width:200px">
-		<input type="submit" value="?" style="font-weight:bold;font-size:18px">
-		</form>
-		<br>
-		<p style="font-size: 18px">Movies with your query: <b><?php echo $search_title; ?></b></p>
 		<table>
-		<?php
-			include 'connect_server.php';
-			$QUERY = "SELECT * FROM btran6291_MOVIE WHERE movie_title LIKE '%" . $search_title . "%' ORDER BY movie_title";
-			$q = $conn->prepare($QUERY);
-			$q->execute();
-			$q->setFetchMode(PDO::FETCH_BOTH);
-
-			while($r=$q->fetch()){
-				echo "<tr><td><a href='movie_page.php?id=". $r["ID"] ."'>". $r["movie_title"] ."</a></td></tr>";
-			}
-			
-			$conn=null;
-		?>
+			<tr><td>
+				<form>
+					<input type="text" name="movie_title" placeholder="Search Title" onkeydown="showSuggestions(this.value)" style="width:300px" required>
+				</form>
+			</td></tr>
+			<tr><td>
+				<ul id="movies-list"></ul>
+			</td></tr>
 		</table>
 	</div>
 
-<?php
-}
+	<script>
 
-?>
+		//Get the movies titles from PHP into an Array
+		var existingTitles = [<?php echo $titlesAsString ?>];
+		//Get the ids
+		var ids = [<?php echo $idsAsString ?>];
+
+		function showSuggestions(searchStr){
+			searchStr = searchStr.toLowerCase(); // For easy comparison
+			var list = document.getElementById("movies-list");
+
+			//Remove all list items if there are any
+			while(list.hasChildNodes()){
+				list.removeChild(list.firstChild);
+			}
+
+			for (i = 0; i < existingTitles.length; i++){
+				//If a title contains a substring that matches with the search string
+				if ((existingTitles[i].toLowerCase()).indexOf(searchStr) > -1 & searchStr.length >= 1){
+					// Create list item element with link to the movie page based on the ID
+					var li = document.createElement("LI");
+					var textNode = document.createTextNode(existingTitles[i]);
+					var a = document.createElement('a');
+					a.href= "movie_page.php?id=" + ids[i];
+					a.appendChild(textNode);
+					li.appendChild(a);
+					document.getElementById("movies-list").appendChild(li);
+				}
+			}
+		}
+	</script>
+</body>
+
+</html>
+
 
 

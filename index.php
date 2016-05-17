@@ -1,15 +1,18 @@
-<!doctype html>
 <?php
+	//Value determines which page to display.
 	$page = $_GET["page"];
 	$page_title = "";
+
+	//Shorten the sql command, for better viewability
 	$releaseYear = "SUBSTRING(movie_released_date,1, 4)";
 	$releaseMonth = "SUBSTRING(movie_released_date,6, 2)";
 	$releaseDay = "SUBSTRING(movie_released_date,9, 2)";
 
 	//Values to set link on navigation bar as active
 	$one = $two = $three = $four = $five = $six = $seven = $eight = $nine = "";
-
-	switch($page){ //Popluate different pages with different information
+	$visibility = "visible";
+	//Popluate different pages with different information
+	switch($page){ 
 		
 		case "main":
 			$page_title = "Soon to be Released";
@@ -18,18 +21,22 @@
 			//(year > cYear) || (year = cYear && month > cMonth) || (year = cYear && month = cMonth && day >= cDay) 
 			$QUERY = "SELECT * 
 						FROM btran6291_MOVIE 
-						WHERE ((".$releaseYear." > YEAR(CURDATE())) OR 
-							(".$releaseYear." = YEAR(CURDATE()) AND ".$releaseMonth." > MONTH(CURDATE())) OR 
-							(".$releaseYear." = YEAR(CURDATE()) AND ".$releaseMonth." = MONTH(CURDATE()) AND ".$releaseDay." >= DAY(CURDATE()))) 
+						WHERE (($releaseYear > YEAR(CURDATE())) OR 
+							($releaseYear = YEAR(CURDATE()) AND $releaseMonth > MONTH(CURDATE())) OR 
+							($releaseYear = YEAR(CURDATE()) AND $releaseMonth = MONTH(CURDATE()) AND $releaseDay >= DAY(CURDATE()))) 
 						ORDER BY movie_released_date asc";
+			$visibility = "hidden";
 			break;
 		case "current":
 			$page_title = "Now Showing";
 			$two = "active";
-			//Newest movies released in 2016 only
+			//Current Year
+			//Months prior to the current month
+			//
 			$QUERY = "SELECT * 
 						FROM btran6291_MOVIE 
-						WHERE (".$releaseYear." = YEAR(CURDATE()) AND ".$releaseMonth." <= MONTH(CURDATE()) AND ".$releaseDay." <= DAY(CURDATE())) 
+						WHERE ($releaseYear = YEAR(CURDATE()) AND 
+								$releaseMonth <= MONTH(CURDATE())) 
 						ORDER BY movie_released_date desc";
 			break;
 		case "topall":
@@ -45,7 +52,7 @@
 			$four = "active";
 			$QUERY = "SELECT * 
 						FROM btran6291_MOVIE 
-						WHERE movie_rating > 7.5 && ".$releaseYear." = 2015 
+						WHERE movie_rating > 7 && $releaseYear = 2015 
 						ORDER BY movie_rating desc";
 			break;
 		case "top14":
@@ -53,7 +60,7 @@
 			$five = "active";
 			$QUERY = "SELECT * 
 						FROM btran6291_MOVIE 
-						WHERE movie_rating > 7.5 && ".$releaseYear." = 2014 
+						WHERE movie_rating > 7 && $releaseYear = 2014 
 						ORDER BY movie_rating desc";
 			break;
 		case "top13":
@@ -61,7 +68,7 @@
 			$six = "active";
 			$QUERY = "SELECT * 
 						FROM btran6291_MOVIE 
-						WHERE movie_rating > 7.5 && ".$releaseYear." = 2013 
+						WHERE movie_rating > 7 && $releaseYear = 2013 
 						ORDER BY movie_rating desc";
 			break;
 		case "top12":
@@ -69,7 +76,7 @@
 			$seven = "active";
 			$QUERY = "SELECT * 
 						FROM btran6291_MOVIE 
-						WHERE movie_rating > 7.5 && ".$releaseYear." = 2012 
+						WHERE movie_rating > 7 && $releaseYear = 2012 
 						ORDER BY movie_rating desc";
 			break;
 		case "top11":
@@ -77,7 +84,7 @@
 			$eight = "active";
 			$QUERY = "SELECT * 
 						FROM btran6291_MOVIE 
-						WHERE movie_rating > 7.5 && ".$releaseYear." = 2011 
+						WHERE movie_rating > 7 && $releaseYear = 2011 
 						ORDER BY movie_rating desc";
 			break;
 		case "top10":
@@ -85,14 +92,16 @@
 			$nine = "active";
 			$QUERY = "SELECT * 
 						FROM btran6291_MOVIE 
-						WHERE movie_rating > 7.5 && ".$releaseYear." = 2010 
+						WHERE movie_rating > 7 && $releaseYear = 2010 
 						ORDER BY movie_rating desc";
+			break;
+		case "all":	//TODO List all movies, show 15 at a time, sortable
 			break;
 		default: //Same as main
 			$page_title = "New and Currently Showing Movies";
 			$QUERY = "SELECT * 
 						FROM btran6291_MOVIE 
-						WHERE ".$releaseYear." = 2016 
+						WHERE $releaseYear = 2016 
 						ORDER BY movie_released_date desc";
 	}//end switch 
 
@@ -102,26 +111,29 @@
 	$q->execute();
 	$q->setFetchMode(PDO::FETCH_BOTH);
 ?>
-<html>
-
+<!doctype html>
+<html lang="en">
 <head>
-<title><?php echo $page_title . " - Bao Tran MovieDB"; ?></title>
-<link rel="stylesheet" type="text/css" href="styles.css">
+	<title><?php echo $page_title . " - Bao Tran MovieDB"; ?></title>
+	<link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 
 <body>
+	
 <?php
 	include "nav-bar.php";
 ?>
-
+<!--DOCUMENT
+==================================================
+-->
 <div class="document">
 	<br><h1><center><?php echo $page_title; ?></center></h1>
 	<hr>
 	<table width="100%">
 		<?php
-			
+			//Populate the page with rows of movies 
 			while($r=$q->fetch()){
-				//Generate Rows of Movies
+				
 				$movie_id= $r["ID"];
 				$poster_url = $r["poster_url"];
 				$movie_released_date= $r["movie_released_date"];
@@ -131,9 +143,9 @@
 				
 				echo "
 				<tr>
-					<td width='20%'>
+					<td width='250px'>
 						<a href='movie_page.php?id=".$movie_id."'>
-						<img src='". $poster_url ."' style='width:250px;height:350px;' class='imgBox'>
+						<img src='". $poster_url ."' style='width:250px;height:350px;' alt='".$movie_title."' class='imgBox'>
 						</a>
 					</td>
 					<td width='65%' style='vertical-align:bottom;'>
@@ -148,7 +160,7 @@
 						</p>
 					</td>
 					<td width='15%' align='center'>
-						<div class='movie_rating'>
+						<div class='movie_rating' style='visibility:".$visibility."'>
 							". $movie_rating . "/10
 						</div>
 					</td>
@@ -160,13 +172,17 @@
 			
 		?>
 		<?php
+			/**
+			*	Convert the string to date format (# month ####)
+			*	$date - The string to be formatted
+			**/
 			function formatDate($date){
 				$dateObject = date_create($date);
 				return date_format($dateObject, "j F Y");
 			}
 		?>
 
-	<table>
+	</table>
 </div>
 
 </body>
@@ -174,7 +190,9 @@
 <footer>
 	<p align="right">Sample Movies Data Obtained from IMDB</p>
 </footer>
+
 <div class="contact-button">
 	<a href="http://baotran.xyz">Bao Tran</a>
 </div>
+
 </html>
