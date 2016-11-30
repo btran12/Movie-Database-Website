@@ -76,10 +76,10 @@ table td#url,th{
 	font-size:16px;
 }
 .document .imgBox{
-	opacity: 1;
+	opacity: .9;
 }
 .document .imgBox:hover{
-	opacity: .6;
+	opacity: 1;
 }
 .movie_title, .movie_rating{
 	font-family: 'Fjalla One', sans-serif;
@@ -121,6 +121,18 @@ th{
 }
 input{
 	background: transparent;
+}
+input[type="date"] {
+  font-size: 16px;
+  border: none;
+  border-bottom: solid 2px #46869C;
+  padding: 10px;
+  padding-bottom: 2px;
+  color: black;
+}
+input[type="date"]:focus {
+	outline:none;
+	border-bottom: solid 2px #7ebace;
 }
 input[type="text"] {
 	padding: 10px;

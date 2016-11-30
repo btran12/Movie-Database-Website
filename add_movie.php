@@ -57,7 +57,7 @@ if ($_SESSION['valid'] && ($_SESSION['username'] == 'btran')){
 										</td>
 										<td>
 											<p>Date Released in USA</p>
-											<input type="text" id="date-field" name="date" placeholder="YYYY/MM/DD" pattern="^\d{4}\/(0?[1-9]|1[012])\/(0?[1-9]|[12][0-9]|3[01])$" title="Format: 20YY/MM/DD" onkeyup="addSlashToDate(this.value)" style="width: 150px">
+											<input type="date" id="date-field" name="date" style="width: 180px">
 										</td>
 									</tr>
 									<tr>
@@ -118,16 +118,6 @@ if ($_SESSION['valid'] && ($_SESSION['username'] == 'btran')){
 					}
 
 				}
-				/**
-				*	Automatically add slashes to the date as the user types
-				*	dateStr - the current value of the input field
-				**/
-				function addSlashToDate(dateStr){
-					// YYYY/MM/DD
-					if (dateStr.length == 4 || dateStr.length == 7){
-						document.getElementById('date-field').value += "/";
-					}
-				}
 
 			</script>
 		</body>
@@ -166,7 +156,8 @@ if ($_SESSION['valid'] && ($_SESSION['username'] == 'btran')){
 		$duration= sanitize($_POST['duration']);
 		$link= sanitize($_POST['poster_link']);
 		$date= sanitize($_POST['date']);
-
+		//Reformat date to YYYY/MM/DD
+		$date = date_format(date_create($date), "Y/m/d");
 		if($q->execute(array($title,$plot,$director,$duration,$link,$date,$rating))){
 			echo '<script>document.location = "add_movie.php";</script>'; 
 		}else{
