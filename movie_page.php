@@ -31,7 +31,7 @@ if (empty($_POST)){
 ?>
 <?php
 	//Youtube API ---------------------------
-	$DEVELOPER_KEY = "AIzaSyBBj3selsO2bOhTYRuR6ZxmJxRzup2Bx5c";
+	$DEVELOPER_KEY = "";
 
 	$base_url = "https://www.googleapis.com/youtube/v3/search?part=id&q=";
 	$url_query = rawurlencode($m["movie_title"] . " trailer");
